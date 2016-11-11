@@ -1,82 +1,112 @@
 #include <iostream>
-//#include "download.h"
-//#include "curving.h"
-#include <fstream>
-#include "student.h"
+#include <string>		// For utilizing strings
 using namespace std;
 
-/* I try to find something that teach how to build a GUI in QT and I found a link below:
- *
-http://www.bogotobogo.com/cplusplus/files/c-gui-programming-with-qt-4-2ndedition.pdf
 
-And this is the tutorial for QT4 but I think it still help us to construct a GUI.
-I will keep looking and update new files if I find a better one.
-Cheers!
-
-/* ASSUMPTION: Data is in .txt file
- * data in .txt is in the format
-       assignmenttype(int )indicates whether assignment is a Test or a homework
-       student_ID     Marks
-       student_ID     Marks
-  * TODO: make number of students and number of assignments dynamic
-*/
+struct Assignment{
+    string name;		// Name of student
+    int idnum;			// Student ID number
+    int* assignments;			// Pointer to an array of test scores
 
 
-const int NUM_STUDENTS = 10;
-int main() {
-    int count=0;
-    Student s[NUM_STUDENTS];
-    //Assignment a[NUM_ASSIGNMENTS]; //TODO
-    //for(int k=0; k< NUM_ASSIGNMENTS; k++) {
-    ifstream filename("a1.txt");
-    if(filename.is_open()){
-        for(int k=1;k<=NUM_ASSIGNMENTS;k++){  //NUM_ASSIGNMENTS (for now took it as 2 )is a constant in student.h
-            count=0;
-            int assignmentType;
-            filename>>assignmentType;
-            Student::SetAssignmentType(assignmentType);
-            if(Student::GetAssignment_type() == 1)
-                Student::Set_numAssignments();
-            else if(Student::GetAssignment_type() == 2)
-                Student::Set_numTests();
-            for(int i=0;i<NUM_STUDENTS;i++){
+};
 
-                int id = 0;
-                double marks = 0.0;
-                filename >> id;
-                filename >> marks;
-                if (k==1){
-                    //First assignment, no data in student objects yet
-                    //Assign directly without any checks
-                    s[i].Setstudent_id(id);
-                    s[i].Set_Marks(k-1,marks);
-                    s[i].allAssignments_avg();
-                }
-                else{
-                    for(int j=0; j<NUM_STUDENTS; j++){
-                        /*student id's for each assignment will not be in the same
-                          order, so check before assigning*/
-                        if(s[j].Getstudent_id() == id){
-                            s[j].Set_Marks(k-1,marks);
-                            s[j].allAssignments_avg();
-                        }
-                    }
-                }
-                count++;
-            }
-            filename.close();
-            filename.open("a2.txt");
-            if(filename.is_open()){
+// Function Prototype(s)
+int inputStudents();				// Asks user for number of students
+int inputassignments();					// Asks user for number of Assignments scores
+string inputName();					// Asks uer for each student's name
+int inputID();						// Asks user for each student's ID number
+int *inputScores(int);				// Asks user for the Assignments scores for each student
+void display(assignment*, size);		// Displays each student's name,ID#,number of Assignments, scores
 
-            }
-            else {
-               cout<<"not open";
-            }
-        }
+
+int main(){
+
+    // Create a dynamic array of the Assignment. Array size is based upon user input given in
+    // the inputStudents function.
+    assignment*studentList;
+    int size = inputStudents();
+    studentList = new assignment[size];
+
+    // Check for possible memory allocation errors. if number of students =0 then error is found, end program.
+    if (studentList == NULL){
+        cout << "Memory Allocation Error!";
+        system("pause");
+        return 0;
     }
-    else
-        cout<<"not open";
-    cout<<s[0].allAssignments_avg()<<'\n'<<s[1].allAssignments_avg()<<'\n';
-    cout<<s[2].allAssignments_avg()<<'\n'<<s[3].allAssignments_avg()<<'\n';
+
+
+    for (int count = 0; count <= size; count++){
+        studentList[count].name = inputName();
+        studentList[count].idnum = inputID();
+        studentList[count].assignments = inputScores(numOfassignments);
+    }
+
+    display(studentList, int size);
+
+    delete [] *studentList;
+
+    system ("pause");
     return 0;
 }
+
+int inputStudents(){
+
+    int students;
+    cout << "Number of students in your class" << endl;
+    cin >> students;
+
+    return students;
+}
+int inputassignments(){
+
+    int assignments;
+    cout << "How many Assignments will there be?" << endl;
+    cin >> assignments;
+
+    return assignments;
+}
+
+string inputName(){
+
+    string name;
+    cout << "Enter the student's name: ";
+    cin >> name;
+
+    return name;
+
+}
+
+int inputID(){
+
+    int idNum;
+    cout << "Enter the student's CWID Number ";
+    cin >> idNum;
+
+    return idNum;
+
+}
+int *inputScores(int numOfassignments){
+
+    int *scores;
+    scores = new int[numOfassignments];
+
+    cout << "Enter Assignment scores and press ENTER after each score." << endl;
+
+    for (int count = 0; count <= numOfassignments; count++){
+        cout << "Score " << (count + 1) << ": ";
+        cin >> scores[count];
+    }
+
+    return scores;
+}
+
+void display(assignment *studentList, size){
+
+    for (int count = 0; count < size; count++)
+        cout << studentList[count].name << " " << studentList[count].idnum << " "
+        << studentList[count].score<<endl;
+
+    return;
+}
+
